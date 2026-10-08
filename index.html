@@ -4,38 +4,412 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <!-- 主畫面（max-edulab 入口）用的標籤：主畫面會讀這些 meta 來顯示、搜尋、排序 -->
-<meta name="edulab:title" content="成語小學堂（範例）">
+<meta name="edulab:title" content="成語小學堂">
 <meta name="edulab:stage" content="國小六年級">
 <meta name="edulab:subject" content="國語">
-<meta name="edulab:tags" content="成語,修辭,閱讀理解,範例">
-<meta name="edulab:desc" content="六年級國語的範例遊戲：之後會加入成語、修辭和閱讀理解的關卡。">
+<meta name="edulab:tags" content="成語,近義詞,反義詞,成語填空,上學期">
+<meta name="edulab:desc" content="四個人一起玩成語牌：看題目找出意思相近、相反或填進句子的成語，誰先出完手上的牌就贏。">
 <meta name="edulab:icon" content="📜">
-<meta name="description" content="六年級國語的範例遊戲：之後會加入成語、修辭和閱讀理解的關卡。">
-<title>成語小學堂（範例）</title>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@500;700;900&family=Press+Start+2P&display=swap" rel="stylesheet">
+<meta name="description" content="四個人一起玩成語牌：看題目找出意思相近、相反或填進句子的成語，誰先出完手上的牌就贏。">
+<title>成語小學堂</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@500;700;900&family=Noto+Serif+TC:wght@700;900&family=Press+Start+2P&display=swap" rel="stylesheet">
 <style>
-:root{--sky:#5c94fc;--ink:#1b1b2f;--paper:#fffbe8;--brick:#c84c0c;--leaf:#3c9c28;color-scheme:light}
+:root{
+  --felt:#1f7a4a; --felt2:#186a3e; --ink:#1b1b2f; --paper:#fffbe8; --brick:#c84c0c; --gold:#fcbc3c; --leaf:#3c9c28; --muted:#6a6a80; --red:#c8283c;
+  --f-zy:"Noto Sans TC","Microsoft JhengHei","PingFang TC",sans-serif;
+  --f-serif:"Noto Serif TC","Songti TC","PMingLiU",serif;
+  --f-px:"Press Start 2P",ui-monospace,monospace;
+  color-scheme:light;
+}
 *{box-sizing:border-box}
-body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:16px;background:var(--sky);color:var(--ink);font-family:"Noto Sans TC","Microsoft JhengHei","PingFang TC",sans-serif}
-.card{max-width:520px;width:100%;background:var(--paper);border:4px solid var(--ink);box-shadow:6px 6px 0 rgba(0,0,0,.25);padding:28px 24px;text-align:center}
-.px{font-family:"Press Start 2P",monospace;font-size:12px;color:var(--brick)}
-h1{margin:10px 0 6px;font-size:30px;font-weight:900}
-.chips{display:flex;justify-content:center;gap:6px;margin:10px 0 16px}
-.chip{font-size:13px;font-weight:700;padding:2px 8px;border:2px solid var(--ink);background:#ffe08a}
-.chip.s{background:#bfe8c0}
-p{line-height:1.7;margin:0 0 18px}
-.big{font-size:56px;line-height:1}
-a{display:inline-block;font-weight:900;color:#fff;background:var(--leaf);border:3px solid var(--ink);box-shadow:0 4px 0 var(--ink);padding:6px 16px;text-decoration:none}
+html,body{margin:0;height:100%}
+body{background:#123d28;color:var(--ink);font-family:var(--f-zy);display:flex;flex-direction:column;min-height:100vh}
+button{font:inherit;color:inherit}
+
+/* ---------- 上方 bar ---------- */
+.bar{flex:none;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 16px;background:var(--ink);color:#fff;border-bottom:4px solid #000}
+.bar h1{margin:0;font-size:20px;font-weight:900;display:flex;align-items:center;gap:8px}
+.bar .px{font-family:var(--f-px);font-size:10px;color:var(--gold)}
+.bar .btns{display:flex;gap:8px}
+.bar a,.bar button{font-size:14px;font-weight:700;color:var(--ink);background:var(--paper);border:3px solid #000;padding:3px 10px;text-decoration:none;cursor:pointer}
+
+/* ---------- 牌桌 ---------- */
+.table{flex:1;display:grid;grid-template-columns:150px minmax(0,1fr) 150px;grid-template-rows:auto minmax(0,1fr) auto;gap:10px;padding:12px;
+  background:radial-gradient(ellipse at center,var(--felt) 0%,var(--felt2) 70%,#145a34 100%);max-width:1240px;width:100%;margin:0 auto;min-height:0}
+.seat{display:flex;flex-direction:column;align-items:center;gap:6px;color:#fff;position:relative}
+.seat.top{grid-column:2;grid-row:1}
+.seat.left{grid-column:1;grid-row:2;justify-content:center}
+.seat.right{grid-column:3;grid-row:2;justify-content:center}
+.who{display:flex;align-items:center;gap:6px;background:rgba(0,0,0,.35);border:2px solid rgba(255,255,255,.25);padding:3px 10px 3px 4px;border-radius:999px;font-weight:900}
+.who .av{width:32px;height:32px;display:grid;place-items:center;font-size:20px;background:#fff;border-radius:50%;border:2px solid var(--ink)}
+.who .cnt{font-family:var(--f-px);font-size:10px;color:var(--gold)}
+.seat.turn .who{background:var(--gold);color:var(--ink);border-color:var(--ink);box-shadow:0 0 0 3px rgba(252,188,60,.45)}
+.backs{display:flex;justify-content:center;height:46px}
+.seat.left .backs,.seat.right .backs{flex-direction:column;height:auto;width:46px;align-items:center}
+.back{width:30px;height:44px;border-radius:4px;border:2px solid #fff;background:repeating-linear-gradient(45deg,#a0202e 0 4px,#c8283c 4px 8px);box-shadow:0 2px 0 rgba(0,0,0,.35);margin-left:-18px}
+.back:first-child{margin-left:0}
+.seat.left .back,.seat.right .back{width:44px;height:30px;margin-left:0;margin-top:-20px}
+.seat.left .back:first-child,.seat.right .back:first-child{margin-top:0}
+.bubble{position:absolute;z-index:3;background:#fff;color:var(--ink);border:3px solid var(--ink);border-radius:12px;padding:4px 10px;font-weight:900;white-space:nowrap;box-shadow:0 3px 0 var(--ink)}
+.seat.top .bubble{top:100%;margin-top:4px}
+.seat.left .bubble{left:60%;top:30%}
+.seat.right .bubble{right:60%;top:30%}
+.bubble.pass{background:#e8e8f0;color:var(--muted)}
+.bubble.ok{background:#d4f4c8;color:#1f6a1a}
+.bubble.no{background:#ffd8d8;color:var(--red)}
+
+/* 中間：題目＋剛出的牌 */
+.center{grid-column:2;grid-row:2;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;min-height:0}
+.qcard{width:min(560px,100%);background:var(--paper);border:4px solid var(--ink);border-radius:14px;box-shadow:0 6px 0 rgba(0,0,0,.35);padding:14px 18px;text-align:center}
+.qtype{display:inline-block;font-size:14px;font-weight:900;color:#fff;background:var(--brick);padding:2px 10px;border-radius:999px;margin-bottom:8px}
+.qtype.syn{background:#2c64d8}.qtype.ant{background:var(--red)}.qtype.fill{background:#7a4ac8}
+.qtext{font-size:clamp(18px,2.4vw,24px);font-weight:900;line-height:1.6}
+.qtext .key{font-family:var(--f-serif);color:var(--brick);font-size:1.15em}
+.qsent{margin-top:6px;font-size:clamp(17px,2.2vw,22px);line-height:1.7;font-family:var(--f-serif);font-weight:700}
+.qsent .blank{display:inline-block;min-width:4.4em;border-bottom:3px solid var(--brick);color:var(--brick)}
+.pile{min-height:118px;display:flex;align-items:center;justify-content:center;gap:10px;color:#fff;font-weight:700}
+.pile .from{font-size:14px;background:rgba(0,0,0,.35);padding:2px 8px;border-radius:999px}
+
+/* 牌面 */
+.card{position:relative;width:66px;height:108px;flex:none;border-radius:8px;border:3px solid var(--ink);background:linear-gradient(#fffdf4,#f6ecd0);box-shadow:0 4px 0 rgba(0,0,0,.35);
+  display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0;transition:transform .12s}
+.card::before{content:"";position:absolute;inset:4px;border:1.5px solid #d4b878;border-radius:5px;pointer-events:none}
+.card .w{writing-mode:vertical-rl;font-family:var(--f-serif);font-weight:900;font-size:21px;letter-spacing:.08em;color:var(--ink)}
+.card.big{width:76px;height:122px;cursor:default}
+.card.big .w{font-size:24px}
+.card.ok{border-color:#2f8a1e;box-shadow:0 0 0 4px #7cd060,0 4px 0 rgba(0,0,0,.35)}
+.card.no{border-color:var(--red);box-shadow:0 0 0 4px #ff9aa0,0 4px 0 rgba(0,0,0,.35)}
+.card.new{animation:pop .4s steps(4)}
+@keyframes pop{0%{transform:scale(.6)}70%{transform:scale(1.12)}100%{transform:scale(1)}}
+
+/* 你的手牌 */
+.me{grid-column:1/-1;grid-row:3;display:flex;flex-direction:column;align-items:center;gap:8px}
+.me-top{display:flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:center}
+.status{min-height:30px;font-weight:900;color:#fff;background:rgba(0,0,0,.35);padding:3px 14px;border-radius:999px}
+.status.turn{background:var(--gold);color:var(--ink)}
+.passbtn{font-weight:900;font-size:16px;background:#e8e8f0;border:3px solid var(--ink);box-shadow:0 4px 0 var(--ink);padding:6px 18px;border-radius:8px;cursor:pointer}
+.passbtn:disabled{opacity:.45;cursor:default}
+.passbtn:not(:disabled):active{transform:translateY(4px);box-shadow:none}
+.hand{display:flex;justify-content:center;flex-wrap:wrap;gap:6px;max-width:100%}
+.hand .card:hover{transform:translateY(-8px)}
+.hand.myturn .card{box-shadow:0 4px 0 rgba(0,0,0,.35),0 0 0 3px var(--gold)}
+.me .who{color:#fff}
+
+/* 解釋視窗、結果 */
+.ov{position:fixed;inset:0;z-index:40;display:flex;align-items:center;justify-content:center;padding:16px;background:rgba(10,20,15,.6)}
+.ov[hidden]{display:none}
+.panel{width:min(480px,100%);max-height:calc(100% - 8px);overflow:auto;background:var(--paper);border:4px solid var(--ink);border-radius:14px;box-shadow:0 8px 0 rgba(0,0,0,.35);padding:20px 22px;text-align:center}
+.panel h2{margin:0 0 4px;font-family:var(--f-serif);font-size:40px;font-weight:900;letter-spacing:.1em;color:var(--brick)}
+.panel .sec{text-align:left;margin-top:12px}
+.panel .sec b{display:inline-block;font-size:13px;color:#fff;background:var(--ink);padding:1px 8px;border-radius:999px;margin-bottom:4px}
+.panel .sec p{margin:0;font-size:17px;line-height:1.7}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font-family:var(--f-serif);font-weight:700;font-size:15px;padding:1px 8px;border:2px solid var(--ink);border-radius:6px;background:#fff}
+.chip.syn{background:#dbe8ff}.chip.ant{background:#ffe0e4}
+.row{display:flex;justify-content:center;gap:10px;margin-top:18px;flex-wrap:wrap}
+.btn{font-weight:900;font-size:17px;border:3px solid var(--ink);box-shadow:0 4px 0 var(--ink);padding:8px 22px;border-radius:8px;cursor:pointer;background:#fff}
+.btn.go{background:var(--leaf);color:#fff}
+.btn:active{transform:translateY(4px);box-shadow:none}
+.rank{list-style:none;margin:12px 0 0;padding:0;text-align:left;font-size:17px;font-weight:700}
+.rank li{display:flex;justify-content:space-between;padding:6px 10px;border-bottom:2px dashed #d8d2b8}
+.rules{text-align:left;font-size:16px;line-height:1.8;margin:10px 0 0;padding-left:1.2em}
+
+@media (max-width:720px){
+  .table{grid-template-columns:repeat(3,minmax(0,1fr));grid-template-rows:auto auto auto;padding:8px;gap:8px}
+  .seat.top,.seat.left,.seat.right{grid-row:1}
+  .seat.left{grid-column:1}.seat.top{grid-column:2}.seat.right{grid-column:3}
+  .seat.left .backs,.seat.right .backs{flex-direction:row;width:auto;height:46px}
+  .seat.left .back,.seat.right .back{width:30px;height:44px;margin-top:0;margin-left:-22px}
+  .seat.left .back:first-child,.seat.right .back:first-child{margin-left:0}
+  .back{margin-left:-22px}
+  .who{font-size:13px;padding:2px 8px 2px 2px}.who .av{width:26px;height:26px;font-size:16px}
+  .seat .bubble,.seat.left .bubble,.seat.right .bubble{left:50%;right:auto;top:100%;translate:-50% 0;margin-top:2px}
+  .center{grid-column:1/-1;grid-row:2}
+  .me{grid-row:3}
+  .card{width:54px;height:90px}.card .w{font-size:17px}
+  .card.big{width:62px;height:100px}.card.big .w{font-size:20px}
+  .pile{min-height:100px}
+  .bar h1{font-size:17px}.bar .px{display:none}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 </head>
 <body>
-  <div class="card">
-    <div class="big" aria-hidden="true">📜</div>
-    <div class="px">COMING SOON</div>
-    <h1>成語小學堂</h1>
-    <div class="chips"><span class="chip">國小六年級</span><span class="chip s">國語</span></div>
-    <p>這是六年級國語的範例頁面，<br>之後會加入成語、修辭和閱讀理解的關卡。</p>
-    <a href="https://max-edulab.github.io/home/">◀ 回到主畫面</a>
-  </div>
+<header class="bar">
+  <h1><span class="px">GRADE 6</span>📜 成語小學堂</h1>
+  <div class="btns"><button type="button" id="helpBtn">玩法</button><button type="button" id="newBtn">重新發牌</button><a href="https://max-edulab.github.io/home/">主畫面</a></div>
+</header>
+<main class="table" id="table">
+  <section class="seat top" id="seat2"></section>
+  <section class="seat left" id="seat1"></section>
+  <section class="seat right" id="seat3"></section>
+  <section class="center">
+    <div class="qcard" id="qcard"></div>
+    <div class="pile" id="pile"></div>
+  </section>
+  <section class="me">
+    <div class="me-top"><span class="who" id="meWho"></span><span class="status" id="status"></span><button type="button" class="passbtn" id="passBtn">Pass 不出</button></div>
+    <div class="hand" id="hand"></div>
+  </section>
+</main>
+<div class="ov" id="ov" hidden><div class="panel" id="panel"></div></div>
+<script>
+/* ================= 成語資料 =================
+   w 成語、m 解釋、ex 例句、syn 意思相近、ant 意思相反、fill 填空句（＿ 的地方填成語） */
+const IDIOMS = [
+  { w:'一心一意', m:'心思專注在一件事上，沒有別的念頭。', ex:'他一心一意想當醫生，每天都認真讀書。', syn:['全心全意', '專心致志'], ant:['三心二意'], fill:'姊姊＿地準備考試，連最愛的電視都不看了。' },
+  { w:'三心二意', m:'心意不專一，一下想這樣、一下想那樣。', ex:'做事不能三心二意，才做得好。', syn:['心猿意馬'], ant:['一心一意', '專心致志'], fill:'他＿，一下想學畫畫，一下又想學鋼琴，結果都沒學好。' },
+  { w:'半途而廢', m:'事情做到一半就停下來，沒有完成。', ex:'練琴遇到困難就放棄，那就是半途而廢。', syn:['有始無終'], ant:['持之以恆', '有始有終'], fill:'學才藝不能＿，要堅持到最後。' },
+  { w:'持之以恆', m:'長久堅持下去，不會中斷。', ex:'每天運動要持之以恆，身體才會健康。', syn:['鍥而不捨', '堅持不懈'], ant:['半途而廢'], fill:'背英文單字要＿，每天背一點就會進步。' },
+  { w:'井底之蛙', m:'比喻見識很少、眼光狹小的人。', ex:'多讀書、多出去看看，才不會變成井底之蛙。', syn:['坐井觀天'], ant:['見多識廣'], fill:'只看到自己班上的事，就以為了解全世界，真像＿。' },
+  { w:'畫蛇添足', m:'做了多餘的事，反而把事情弄壞。', ex:'作文已經很好了，再加那段反而畫蛇添足。', syn:['多此一舉'], ant:['恰到好處'], fill:'這幅畫已經很完美了，你再加上幾筆，反而是＿。' },
+  { w:'亡羊補牢', m:'出了問題以後趕快補救，還來得及。', ex:'這次考壞了就亡羊補牢，把錯的地方弄懂。', syn:['知錯能改'], ant:[], fill:'東西被偷了才裝門鎖，雖然是＿，但總比不裝好。' },
+  { w:'未雨綢繆', m:'事情還沒發生，就先做好準備。', ex:'颱風來之前，媽媽未雨綢繆，先買好了水和食物。', syn:['有備無患', '防患未然'], ant:['臨渴掘井'], fill:'天氣預報說明天會下大雨，爸爸＿，今天就把雨衣準備好了。' },
+  { w:'守株待兔', m:'不肯努力，只想靠運氣得到好處。', ex:'不讀書只想考高分，就像守株待兔一樣。', syn:['坐享其成'], ant:[], fill:'想要成功就要努力，不能＿，等好運自己掉下來。' },
+  { w:'對牛彈琴', m:'對不懂的人講道理，白費力氣。', ex:'跟三歲的弟弟講物理，簡直是對牛彈琴。', syn:[], ant:[], fill:'他根本不想聽，你說再多也是＿。' },
+  { w:'狐假虎威', m:'倚仗別人的勢力來欺負人或嚇人。', ex:'他仗著哥哥是班長，在班上狐假虎威。', syn:['仗勢欺人'], ant:[], fill:'那隻小狗站在大狗旁邊汪汪叫，真是＿。' },
+  { w:'自相矛盾', m:'說的話或做的事，前後互相衝突。', ex:'他說不吃糖，口袋卻裝滿糖果，真是自相矛盾。', syn:['前後矛盾'], ant:['自圓其說'], fill:'他剛說自己最守時，今天卻又遲到了，說法＿。' },
+  { w:'拔苗助長', m:'違反事情發展的順序，想要快一點，反而壞事。', ex:'逼小孩一天學五樣才藝，是拔苗助長。', syn:['揠苗助長', '急於求成'], ant:['循序漸進'], fill:'學習要一步一步來，太急反而是＿。' },
+  { w:'循序漸進', m:'按照順序，一步一步慢慢進步。', ex:'學數學要循序漸進，先打好基礎。', syn:['按部就班'], ant:['拔苗助長', '一步登天'], fill:'練跑步要＿，先跑短的距離，再慢慢加長。' },
+  { w:'一舉兩得', m:'做一件事，得到兩種好處。', ex:'騎腳踏車上學既能運動又環保，一舉兩得。', syn:['一箭雙鵰', '一石二鳥'], ant:['得不償失'], fill:'幫媽媽做家事，既能幫忙又能賺零用錢，真是＿。' },
+  { w:'得不償失', m:'得到的好處比失去的還少。', ex:'為了省一點錢熬夜排隊而生病，真是得不償失。', syn:['因小失大'], ant:['一舉兩得'], fill:'為了多玩一點遊戲而熬夜，隔天上課打瞌睡，真是＿。' },
+  { w:'口是心非', m:'嘴巴說的和心裡想的不一樣。', ex:'他嘴上說不想要，眼睛卻一直盯著，真是口是心非。', syn:['言不由衷'], ant:['心口如一', '表裡如一'], fill:'她說一點也不在乎，其實心裡很難過，是個＿的人。' },
+  { w:'津津有味', m:'吃得或看得很有興趣、很有味道。', ex:'弟弟津津有味地吃著冰淇淋。', syn:['饒有興味'], ant:['索然無味'], fill:'爺爺講的故事很好聽，大家都聽得＿。' },
+  { w:'興高采烈', m:'心情非常高興，興致很高。', ex:'聽到要去遊樂園，大家都興高采烈。', syn:['歡天喜地', '眉開眼笑'], ant:['垂頭喪氣', '無精打采'], fill:'放暑假了，同學們＿地走出校門。' },
+  { w:'垂頭喪氣', m:'因為失敗或不順利，低著頭、沒有精神。', ex:'球隊輸了比賽，隊員們垂頭喪氣。', syn:['無精打采', '灰心喪氣'], ant:['興高采烈', '意氣風發'], fill:'考試沒考好，他＿地走回家。' },
+  { w:'手忙腳亂', m:'做事慌張，沒有條理。', ex:'早上起晚了，他手忙腳亂地穿衣服。', syn:['手足無措', '慌慌張張'], ant:['從容不迫', '有條不紊'], fill:'客人突然來了，媽媽一個人在廚房忙得＿。' },
+  { w:'從容不迫', m:'不慌不忙，非常鎮定。', ex:'面對突發狀況，老師仍然從容不迫地指揮大家。', syn:['不慌不忙', '泰然自若'], ant:['手忙腳亂', '手足無措'], fill:'比賽只剩最後十秒，他還是＿地把球投進籃框。' },
+  { w:'小心翼翼', m:'非常謹慎、小心。', ex:'他小心翼翼地捧著剛做好的蛋糕。', syn:['謹小慎微'], ant:['粗心大意', '漫不經心'], fill:'過獨木橋的時候，我們都＿地一步一步走。' },
+  { w:'粗心大意', m:'做事不仔細、不小心。', ex:'考試時粗心大意，把加號看成減號。', syn:['馬馬虎虎', '漫不經心'], ant:['小心翼翼', '一絲不苟'], fill:'他寫作業太＿，常常寫錯字。' },
+  { w:'一絲不苟', m:'做事認真仔細，一點也不馬虎。', ex:'爸爸做木工一絲不苟，每個角度都量得很準。', syn:['精益求精'], ant:['粗心大意', '馬馬虎虎', '敷衍了事'], fill:'老師改作業＿，連一個標點符號都不放過。' },
+  { w:'名列前茅', m:'名次排在最前面。', ex:'她每次考試都名列前茅。', syn:['獨占鰲頭'], ant:['名落孫山'], fill:'哥哥努力練習，終於在比賽中＿。' },
+  { w:'異口同聲', m:'大家說的話都一樣。', ex:'老師問誰想去郊遊，全班異口同聲地說：「我！」', syn:['眾口一詞'], ant:['眾說紛紜', '各執一詞'], fill:'看到雙胞胎走進來，大家＿地叫出他們的名字。' },
+  { w:'眾說紛紜', m:'大家的說法很多，意見都不一樣。', ex:'關於恐龍滅絕的原因，科學家眾說紛紜。', syn:['議論紛紛'], ant:['異口同聲', '眾口一詞'], fill:'班上的花瓶是誰打破的？同學們＿，誰也說不清楚。' },
+  { w:'舉一反三', m:'學會一件事，就能推想出其他相關的事。', ex:'學會這個方法後，要能舉一反三。', syn:['觸類旁通', '聞一知十'], ant:['不知變通'], fill:'老師只教了一題，她就能＿，把其他題目都解出來。' },
+  { w:'目不轉睛', m:'眼睛一動也不動，專心地看著。', ex:'小朋友目不轉睛地看著魔術表演。', syn:['全神貫注'], ant:['東張西望'], fill:'貓咪＿地盯著魚缸裡的小魚。' },
+  { w:'聚精會神', m:'集中精神，非常專心。', ex:'他聚精會神地寫功課，完全沒聽到電話聲。', syn:['專心致志', '心無旁騖'], ant:['心不在焉', '漫不經心'], fill:'上課時大家都＿地聽老師講解。' },
+  { w:'心不在焉', m:'心思不在這裡，不專心。', ex:'他上課心不在焉，老師叫了兩次都沒聽到。', syn:['魂不守舍'], ant:['聚精會神', '全神貫注'], fill:'媽媽和他說話時，他一直看手機，回答得＿。' },
+  { w:'爭先恐後', m:'搶著向前，怕落在別人後面。', ex:'下課鐘一響，同學們爭先恐後地衝向福利社。', syn:['你爭我奪'], ant:['謙讓有禮'], fill:'公車一到站，乘客們＿地擠上車。' },
+  { w:'迫不及待', m:'急得一刻也不能再等。', ex:'收到禮物後，他迫不及待地拆開包裝。', syn:['急不可待', '刻不容緩'], ant:['慢條斯理'], fill:'新的漫畫一出版，弟弟就＿地買回家看。' },
+  { w:'一針見血', m:'說話直接說中最重要的地方。', ex:'老師一針見血地指出我作文的問題。', syn:['切中要害'], ant:['隔靴搔癢', '不得要領'], fill:'他說的話＿，一下子就點出問題在哪裡。' },
+  { w:'胸有成竹', m:'做事前已經有完整的計畫，很有把握。', ex:'他準備得很充分，上台演講時胸有成竹。', syn:['成竹在胸', '十拿九穩'], ant:['手足無措', '束手無策'], fill:'考試前她已經複習很多遍了，所以＿，一點也不緊張。' },
+  { w:'手足無措', m:'慌張得不知道該怎麼辦。', ex:'第一次上台表演，他緊張得手足無措。', syn:['驚慌失措', '手忙腳亂'], ant:['從容不迫', '胸有成竹'], fill:'停電的時候，我在黑漆漆的房間裡＿。' },
+  { w:'錦上添花', m:'在好的上面再加上好的，好上加好。', ex:'得了冠軍又拿到最佳球員，真是錦上添花。', syn:['好上加好'], ant:['雪中送炭'], fill:'這幅畫已經很美了，再配上漂亮的畫框，更是＿。' },
+  { w:'雪中送炭', m:'在別人最需要的時候給予幫助。', ex:'地震後大家捐物資給災民，真是雪中送炭。', syn:['濟困扶危'], ant:['落井下石', '錦上添花'], fill:'我忘了帶雨傘，同學把傘借給我，真是＿。' },
+  { w:'落井下石', m:'趁別人遇到困難時，再去害他。', ex:'朋友有困難時，我們要幫忙，不能落井下石。', syn:['趁火打劫'], ant:['雪中送炭'], fill:'別人已經很難過了，你還取笑他，這是＿的行為。' },
+  { w:'有條不紊', m:'做事很有條理，一點也不亂。', ex:'姊姊把書桌整理得有條不紊。', syn:['井井有條', '有條有理'], ant:['雜亂無章', '手忙腳亂'], fill:'班長＿地分配工作，大家很快就把教室打掃乾淨。' },
+  { w:'千鈞一髮', m:'情況非常危急。', ex:'在千鈞一髮之際，消防員救出了小貓。', syn:['危在旦夕', '岌岌可危'], ant:['安然無恙'], fill:'球滾到馬路上，就在＿的時候，媽媽一把拉住了弟弟。' },
+  { w:'恍然大悟', m:'一下子完全明白過來。', ex:'聽了老師的說明，我才恍然大悟。', syn:['豁然開朗'], ant:['百思不解', '大惑不解'], fill:'看了答案的說明，我才＿，原來是我看錯題目了。' },
+  { w:'滔滔不絕', m:'話很多，說個不停。', ex:'說起恐龍，弟弟就滔滔不絕。', syn:['口若懸河', '侃侃而談'], ant:['啞口無言', '沉默寡言'], fill:'一講到他最愛的棒球，爸爸就＿，誰也插不上話。' },
+  { w:'啞口無言', m:'被問得說不出話來。', ex:'證據擺在眼前，他被問得啞口無言。', syn:['無言以對', '張口結舌'], ant:['滔滔不絕', '口若懸河'], fill:'老師問他作業為什麼沒寫，他＿，只能低下頭。' },
+  { w:'見義勇為', m:'看到正義的事，勇敢地去做。', ex:'他見義勇為，幫老奶奶趕走了搶匪。', syn:['挺身而出'], ant:['袖手旁觀', '見死不救'], fill:'看到有人跌倒，他＿，馬上過去把人扶起來。' },
+  { w:'袖手旁觀', m:'在旁邊看著，不肯幫忙。', ex:'同學遇到困難，我們不能袖手旁觀。', syn:['隔岸觀火', '作壁上觀'], ant:['見義勇為', '拔刀相助'], fill:'大家都在幫忙搬桌子，只有他在一旁＿。' }
+];
+
+/* ================= 遊戲狀態 ================= */
+const PLAYERS = [
+  { name:'你', av:'🙂' },
+  { name:'小美', av:'👧' },
+  { name:'阿哲', av:'👦' },
+  { name:'小安', av:'🧒' }
+];
+const HAND = 10, AI_SKILL = .65;   // AI 手上有對的牌時，出牌的機率
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;' }[c]));
+const shuffle = a => { for (let i = a.length - 1; i > 0; i--){ const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const pick = a => a[Math.floor(Math.random() * a.length)];
+let G = null, timer = null, token = 0;
+
+// 音效
+let actx = null;
+function beep(f, d, t = 'triangle', v = .06, when = 0){
+  try { actx = actx || new (window.AudioContext || window.webkitAudioContext)(); const n = actx.currentTime + when, o = actx.createOscillator(), g = actx.createGain();
+    o.type = t; o.frequency.value = f; g.gain.setValueAtTime(v, n); g.gain.exponentialRampToValueAtTime(.0001, n + d); o.connect(g); g.connect(actx.destination); o.start(n); o.stop(n + d + .02); } catch (e) {}
+}
+const SFX = { play:() => beep(520, .08, 'square', .04), ok:() => [660, 880, 1100].forEach((f, i) => beep(f, .12, 'triangle', .06, i * .08)), no:() => { beep(220, .2, 'sawtooth', .04); beep(160, .25, 'sawtooth', .04, .15); }, pass:() => beep(330, .08, 'sine', .05), win:() => [523, 659, 784, 1047, 784, 1047].forEach((f, i) => beep(f, .16, 'square', .045, i * .13)) };
+
+function newGame(){
+  clearTimeout(timer); token++;
+  const deck = shuffle(IDIOMS.slice());
+  G = { hands:[0, 1, 2, 3].map(() => deck.splice(0, HAND)), deck, turn:0, q:null, passes:0, last:null, done:[], over:false, busy:false };
+  nextQuestion(0);
+}
+
+/* ================= 出題 ================= */
+// 從大家的手牌裡挑一張當答案（一半的機會挑你手上的牌），再從近義、反義、填空裡挑一種問法
+function nextQuestion(starter){
+  const alive = [0, 1, 2, 3].filter(i => G.hands[i].length && !G.done.includes(i));
+  const mineFirst = G.hands[0].length && Math.random() < .5;
+  const owner = mineFirst ? 0 : pick(alive.filter(i => i !== 0).length ? alive.filter(i => i !== 0) : alive);
+  const target = pick(G.hands[owner]);
+  const kinds = ['fill'];
+  if (target.syn.length) kinds.push('syn');
+  if (target.ant.length) kinds.push('ant');
+  const type = pick(kinds);
+  G.q = { type, target, p:type === 'syn' ? pick(target.syn) : type === 'ant' ? pick(target.ant) : '' };
+  G.passes = 0; G.turn = starter; G.last = null;
+  render();
+  step();
+}
+// 這張牌對不對：填空一定要是那一張；近義、反義只要資料裡寫的關係對就算對
+function isRight(card, q){
+  if (card.w === q.target.w) return true;
+  if (q.type === 'syn') return card.syn.includes(q.p);
+  if (q.type === 'ant') return card.ant.includes(q.p);
+  return false;
+}
+
+/* ================= 輪流 ================= */
+function nextTurn(){
+  for (let k = 1; k <= 4; k++){ const i = (G.turn + k) % 4; if (!G.done.includes(i)){ G.turn = i; return; } }
+}
+function step(){
+  if (G.over) return;
+  const my = ++token;
+  render();
+  if (G.turn === 0) return;   // 等你出牌或 pass
+  timer = setTimeout(() => { if (my === token) aiMove(G.turn); }, 1300);
+}
+function aiMove(i){
+  const hand = G.hands[i], right = hand.filter(c => isRight(c, G.q));
+  if (right.length && Math.random() < AI_SKILL) play(i, right[0]);
+  else doPass(i);
+}
+function say(i, text, cls){
+  const el = i === 0 ? null : $('seat' + i);
+  if (!el) return;
+  el.querySelectorAll('.bubble').forEach(b => b.remove());
+  const b = document.createElement('div'); b.className = 'bubble ' + cls; b.textContent = text; el.appendChild(b);
+  setTimeout(() => b.remove(), 1600);
+}
+function doPass(i){
+  SFX.pass(); say(i, 'Pass', 'pass');
+  G.passes++;
+  if (G.passes >= 4 - G.done.length){ reveal(); return; }
+  nextTurn(); step();
+}
+// 大家都 pass：公布答案，換下一題
+function reveal(){
+  const holders = [0, 1, 2, 3].filter(i => G.hands[i].some(c => isRight(c, G.q)));
+  const ans = G.hands.flat().filter(c => isRight(c, G.q)).map(c => c.w);
+  G.last = { who:-1, card:null, msg:`大家都 Pass！答案是「${[...new Set(ans)].join('」或「')}」${holders.length ? `（在${holders.map(i => i === 0 ? '你' : PLAYERS[i].name).join('、')}手上）` : ''}` };
+  render();
+  const my = ++token;
+  timer = setTimeout(() => { if (my === token){ nextTurn(); nextQuestion(G.turn); } }, 2600);
+}
+function play(i, card){
+  SFX.play();
+  if (isRight(card, G.q)){
+    G.hands[i] = G.hands[i].filter(c => c !== card);
+    G.last = { who:i, card, ok:true };
+    if (i) say(i, '出牌！', 'ok');
+    setTimeout(SFX.ok, 120);
+    if (!G.hands[i].length){ G.done.push(i); render(); setTimeout(() => finish(i), 900); return; }
+    render();
+    const my = ++token;
+    timer = setTimeout(() => { if (my === token){ G.turn = i; nextTurn(); nextQuestion(G.turn); } }, 1900);
+  } else {
+    // 出錯牌：牌收回來，再罰抽一張
+    SFX.no();
+    const pen = G.deck.length ? G.deck.pop() : null;
+    if (pen) G.hands[i].push(pen);
+    G.last = { who:i, card, ok:false, pen };
+    if (i) say(i, '出錯了', 'no');
+    G.passes++;
+    if (G.passes >= 4 - G.done.length){ render(); const my = ++token; timer = setTimeout(() => { if (my === token) reveal(); }, 1600); return; }
+    nextTurn();
+    render();
+    const my = ++token;
+    timer = setTimeout(() => { if (my === token) step(); }, 1500);
+  }
+}
+function finish(i){
+  G.over = true; clearTimeout(timer); token++;
+  if (i === 0) SFX.win(); else SFX.no();
+  const order = [0, 1, 2, 3].map(k => ({ k, n:G.hands[k].length })).sort((a, b) => a.n - b.n);
+  showOv(`<h2 style="font-size:30px">${i === 0 ? '🎉 你贏了！' : `${PLAYERS[i].av} ${PLAYERS[i].name}先出完了`}</h2>
+    <p style="margin:6px 0 0;font-size:17px">${i === 0 ? '你最先把十張成語牌都出完了，真厲害！' : '再試一次，看看你能不能最先出完！'}</p>
+    <ol class="rank">${order.map(o => `<li><span>${PLAYERS[o.k].av} ${PLAYERS[o.k].name}</span><span>剩 ${o.n} 張</span></li>`).join('')}</ol>
+    <div class="row"><button class="btn go" data-new>再玩一次</button></div>`);
+}
+
+/* ================= 畫面 ================= */
+const cardHtml = (c, cls = '', attr = '') => `<button type="button" class="card ${cls}" ${attr} aria-label="${esc(c.w)}"><span class="w">${esc(c.w)}</span></button>`;
+function seatHtml(i){
+  const n = G.hands[i].length, backs = Math.min(n, 10);
+  return `<span class="who"><span class="av">${PLAYERS[i].av}</span>${PLAYERS[i].name}<span class="cnt">${n}</span></span>
+    <div class="backs">${'<span class="back"></span>'.repeat(backs)}</div>`;
+}
+function render(){
+  if (!G) return;
+  [1, 2, 3].forEach(i => { const el = $('seat' + i), bub = el.querySelector('.bubble'); el.innerHTML = seatHtml(i); if (bub) el.appendChild(bub); el.classList.toggle('turn', G.turn === i && !G.over); });
+  $('meWho').innerHTML = `<span class="av">${PLAYERS[0].av}</span>你<span class="cnt">${G.hands[0].length}</span>`;
+  // 題目
+  const q = G.q;
+  if (q){
+    const head = q.type === 'syn' ? '<span class="qtype syn">意思相近</span>' : q.type === 'ant' ? '<span class="qtype ant">意思相反</span>' : '<span class="qtype fill">成語填空</span>';
+    $('qcard').innerHTML = head + (q.type === 'fill'
+      ? `<div class="qtext">下面的句子要填哪一個成語？</div><div class="qsent">${esc(q.target.fill).replace('＿', '<span class="blank">？</span>')}</div>`
+      : `<div class="qtext">找出和 <span class="key">「${esc(q.p)}」</span> 意思${q.type === 'syn' ? '相近' : '相反'}的成語</div>`);
+  }
+  // 剛出的牌
+  const L = G.last;
+  $('pile').innerHTML = !L ? '' : L.who < 0 ? `<span class="from">${esc(L.msg)}</span>`
+    : `${cardHtml(L.card, 'big new ' + (L.ok ? 'ok' : 'no'), 'data-look="' + esc(L.card.w) + '"')}<span class="from">${L.who === 0 ? '你' : PLAYERS[L.who].name}${L.ok ? ' 答對了！' : ` 出錯了，罰抽一張${L.pen ? '' : '（牌堆沒牌了）'}`}</span>`;
+  // 你的手牌
+  const myTurn = G.turn === 0 && !G.over && G.q;
+  $('hand').className = 'hand' + (myTurn ? ' myturn' : '');
+  $('hand').innerHTML = G.hands[0].map(c => cardHtml(c, '', `data-w="${esc(c.w)}"`)).join('');
+  $('status').className = 'status' + (myTurn ? ' turn' : '');
+  $('status').textContent = G.over ? '遊戲結束' : myTurn ? '輪到你了：點一張牌看解釋、出牌，或按 Pass' : `等 ${PLAYERS[G.turn].name} 出牌…`;
+  $('passBtn').disabled = !myTurn;
+}
+
+/* ================= 解釋視窗 ================= */
+const ov = $('ov');
+function showOv(html){ $('panel').innerHTML = html; ov.hidden = false; const f = $('panel').querySelector('.btn'); if (f) f.focus(); }
+function hideOv(){ ov.hidden = true; }
+function explain(card, canPlay){
+  showOv(`<h2>${esc(card.w)}</h2>
+    <div class="sec"><b>解釋</b><p>${esc(card.m)}</p></div>
+    <div class="sec"><b>例句</b><p>${esc(card.ex)}</p></div>
+    ${card.syn.length ? `<div class="sec"><b>意思相近</b><div class="chips">${card.syn.map(s => `<span class="chip syn">${esc(s)}</span>`).join('')}</div></div>` : ''}
+    ${card.ant.length ? `<div class="sec"><b>意思相反</b><div class="chips">${card.ant.map(s => `<span class="chip ant">${esc(s)}</span>`).join('')}</div></div>` : ''}
+    <div class="row">${canPlay ? `<button class="btn go" data-play="${esc(card.w)}">出這張牌</button>` : ''}<button class="btn" data-close>結束</button></div>`);
+}
+const RULES = `<h2 style="font-size:30px">玩法</h2>
+  <ol class="rules">
+    <li>你和小美、阿哲、小安四個人，每人有 10 張成語牌。</li>
+    <li>中間會出題目：找<b>意思相近</b>、<b>意思相反</b>的成語，或是<b>填進句子</b>的成語。</li>
+    <li>輪到你的時候，點一張牌可以看解釋；覺得對就按「出這張牌」，不確定就按「Pass」。</li>
+    <li>出對了牌就丟掉；出錯了牌會收回來，還要罰抽一張。</li>
+    <li>大家都 Pass，就會公布答案，換下一題。</li>
+    <li>誰先把手上的牌出完，誰就贏！</li>
+  </ol>
+  <div class="row"><button class="btn go" data-close>開始玩</button></div>`;
+
+$('hand').addEventListener('click', e => {
+  const b = e.target.closest('[data-w]'); if (!b || !G) return;
+  const card = G.hands[0].find(c => c.w === b.dataset.w);
+  if (card) explain(card, G.turn === 0 && !G.over && !!G.q);
+});
+$('pile').addEventListener('click', e => { const b = e.target.closest('[data-look]'); if (b) explain(IDIOMS.find(c => c.w === b.dataset.look), false); });
+$('panel').addEventListener('click', e => {
+  if (e.target.closest('[data-close]')){ hideOv(); return; }
+  if (e.target.closest('[data-new]')){ hideOv(); newGame(); return; }
+  const p = e.target.closest('[data-play]');
+  if (p && G.turn === 0 && !G.over){ const card = G.hands[0].find(c => c.w === p.dataset.play); hideOv(); if (card) play(0, card); }
+});
+ov.addEventListener('click', e => { if (e.target === ov && !G.over) hideOv(); });
+addEventListener('keydown', e => { if (e.key === 'Escape' && !ov.hidden && !G.over) hideOv(); });
+$('passBtn').addEventListener('click', () => { if (G && G.turn === 0 && !G.over){ hideOv(); doPass(0); } });
+$('newBtn').addEventListener('click', () => { hideOv(); newGame(); });
+$('helpBtn').addEventListener('click', () => showOv(RULES));
+
+newGame();
+showOv(RULES);
+</script>
 </body>
 </html>
