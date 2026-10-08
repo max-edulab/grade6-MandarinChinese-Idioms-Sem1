@@ -8,9 +8,9 @@
 <meta name="edulab:stage" content="國小六年級">
 <meta name="edulab:subject" content="國語">
 <meta name="edulab:tags" content="成語,近義詞,反義詞,成語填空,上學期">
-<meta name="edulab:desc" content="四個人一起玩成語牌：看題目出意思相近、相反或填進句子的成語，還能抓別人出錯的牌，先拿到 50 分就贏。">
+<meta name="edulab:desc" content="兩個人一起玩成語牌：看題目出意思相近、相反或填進句子的成語，還能抓別人出錯的牌，先拿到 50 分就贏。">
 <meta name="edulab:icon" content="📜">
-<meta name="description" content="四個人一起玩成語牌：看題目出意思相近、相反或填進句子的成語，還能抓別人出錯的牌，先拿到 50 分就贏。">
+<meta name="description" content="兩個人一起玩成語牌：看題目出意思相近、相反或填進句子的成語，還能抓別人出錯的牌，先拿到 50 分就贏。">
 <title>成語小學堂</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -36,10 +36,10 @@ button{font:inherit;color:inherit}
 .bar a,.bar button{font-size:14px;font-weight:700;color:var(--ink);background:var(--paper);border:3px solid #000;padding:3px 10px;text-decoration:none;cursor:pointer}
 
 /* ---------- 牌桌 ---------- */
-.table{flex:1;display:grid;grid-template-columns:170px minmax(0,1fr) 170px;grid-template-rows:auto minmax(0,1fr) auto;gap:10px;padding:12px;
+.table{flex:1;display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:auto minmax(0,1fr) auto;gap:10px;padding:12px;
   background:radial-gradient(ellipse at center,var(--felt) 0%,var(--felt2) 70%,#145a34 100%);max-width:1240px;width:100%;margin:0 auto}
 .seat{display:flex;flex-direction:column;align-items:center;gap:6px;color:#fff;position:relative}
-.seat.top{grid-column:2;grid-row:1}
+.seat.top{grid-column:1;grid-row:1}
 .seat.left{grid-column:1;grid-row:2;justify-content:center}
 .seat.right{grid-column:3;grid-row:2;justify-content:center}
 .who{display:inline-flex;align-items:center;gap:6px;background:rgba(0,0,0,.35);border:2px solid rgba(255,255,255,.25);padding:3px 10px 3px 4px;border-radius:999px;font-weight:900;color:#fff}
@@ -60,7 +60,7 @@ button{font:inherit;color:inherit}
 .mark.ok{background:#d4f4c8;color:#1f6a1a}.mark.no{background:#ffd8d8;color:var(--red)}.mark.got{background:#fff3b0;color:var(--brick)}
 
 /* 中間：題目 */
-.center{grid-column:2;grid-row:2;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;min-height:0}
+.center{grid-column:1;grid-row:2;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;min-height:0}
 .qcard{width:min(580px,100%);background:var(--paper);border:4px solid var(--ink);border-radius:14px;box-shadow:0 6px 0 rgba(0,0,0,.35);padding:14px 18px;text-align:center}
 .qhead{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:6px}
 .qtype{display:inline-block;font-size:14px;font-weight:900;color:#fff;padding:2px 10px;border-radius:999px}
@@ -100,6 +100,8 @@ button{font:inherit;color:inherit}
 .passbtn:disabled{opacity:.45;cursor:default}
 .passbtn:not(:disabled):active{transform:translateY(4px);box-shadow:none}
 .hand{display:flex;justify-content:center;flex-wrap:wrap;gap:6px;max-width:100%}
+.hand{gap:10px}
+.hand .card{width:80px;height:130px}.hand .card .w{font-size:26px}
 .hand .card:hover{transform:translateY(-8px)}
 .hand.myturn .card{box-shadow:0 4px 0 rgba(0,0,0,.35),0 0 0 3px var(--gold)}
 .shelf{display:flex;flex-direction:column;align-items:center;gap:4px;background:rgba(0,0,0,.3);border:2px dashed rgba(255,255,255,.35);border-radius:12px;padding:6px 10px;color:#fff;min-width:150px}
@@ -130,18 +132,16 @@ button{font:inherit;color:inherit}
 .toast[hidden]{display:none}
 
 @media (max-width:760px){
-  .table{grid-template-columns:repeat(3,minmax(0,1fr));grid-template-rows:auto auto auto;padding:8px;gap:8px}
-  .seat.top,.seat.left,.seat.right{grid-row:1}
-  .seat.left{grid-column:1}.seat.top{grid-column:2}.seat.right{grid-column:3}
+  .table{grid-template-rows:auto auto auto;padding:8px;gap:8px}
   .who{font-size:13px;padding:2px 8px 2px 2px}.who .av{width:26px;height:26px;font-size:16px}
   .loot{font-size:15px}
   .slot{min-height:96px}
-  .center{grid-column:1/-1;grid-row:2}
   .me{grid-row:3;grid-template-columns:minmax(0,1fr)}
   .me .mine{order:-1;flex-direction:row;justify-content:center;flex-wrap:wrap}
   .shelf{flex-direction:row;min-width:0}
   .shelf .loot{font-size:22px}
   .card{width:52px;height:88px}.card .w{font-size:17px}
+  .hand .card{width:60px;height:100px}.hand .card .w{font-size:20px}
   .card.sm{width:44px;height:74px}.card.sm .w{font-size:14px}
   .bar{padding:6px 10px}.bar h1{font-size:16px;white-space:nowrap}.bar .px{display:none}
   .bar .btns{gap:4px}.bar a,.bar button{font-size:12px;padding:2px 6px;border-width:2px;white-space:nowrap}
@@ -155,9 +155,7 @@ button{font:inherit;color:inherit}
   <div class="btns"><button type="button" id="helpBtn">玩法</button><button type="button" id="newBtn">重新開始</button><a href="https://max-edulab.github.io/home/">主畫面</a></div>
 </header>
 <main class="table">
-  <section class="seat top" id="seat2"></section>
-  <section class="seat left" id="seat1"></section>
-  <section class="seat right" id="seat3"></section>
+  <section class="seat top" id="seat1"></section>
   <section class="center">
     <div class="qcard" id="qcard"></div>
     <div class="phase" id="phase"></div>
@@ -295,8 +293,9 @@ const CARDS = GROUPS.flatMap(g => g.cards.map(([w, m, ex]) => ({ w, m, ex, g:g.i
 const groupOf = id => GROUPS.find(g => g.id === id);
 
 /* ================= 規則設定 ================= */
-const PLAYERS = [{ name:'你', av:'🙂' }, { name:'小美', av:'👧' }, { name:'阿哲', av:'👦' }, { name:'小安', av:'🧒' }];
-const HAND = 10, WIN = 50, RIGHT_PTS = 5, CATCH_PTS = 1, CHECK_SEC = 10;
+const PLAYERS = [{ name:'你', av:'🙂' }, { name:'小美', av:'👧' }];   // 兩家玩：你和小美
+const N = PLAYERS.length, ALL = [...Array(N).keys()], AIS = ALL.slice(1);
+const HAND = 5, WIN = 50, RIGHT_PTS = 5, CATCH_PTS = 1, CHECK_SEC = 10;
 const AI = { play:.7, bluff:.2, catch:.35 };   // 有對的牌時出牌的機會、沒有時亂出的機會、看到錯牌去抓的機會
 const LOOT = [['🐶', '小狗'], ['🐱', '小貓'], ['🐰', '兔子'], ['🐹', '倉鼠'], ['🦊', '狐狸'], ['🐼', '熊貓'], ['🐢', '烏龜'], ['🦜', '鸚鵡'],
   ['🎈', '氣球'], ['🪁', '風箏'], ['🏆', '獎盃'], ['👑', '皇冠'], ['🚲', '腳踏車'], ['⚽', '足球'], ['🎸', '吉他'], ['🌟', '星星']];
@@ -324,8 +323,8 @@ const SFX = { play:() => beep(520, .08, 'square', .04), ok:() => [660, 880, 1100
 function newGame(){
   clearTimers();
   const deck = shuffle(CARDS.slice());
-  G = { hands:[0, 1, 2, 3].map(() => deck.splice(0, HAND)), deck, disc:[], score:[0, 0, 0, 0], loot:[[], [], [], []], round:0, start:Math.floor(Math.random() * 4),
-    q:null, phase:'play', order:[], oi:0, played:[null, null, null, null], left:0, over:false };
+  G = { hands:ALL.map(() => deck.splice(0, HAND)), deck, disc:[], score:ALL.map(() => 0), loot:ALL.map(() => []), round:0, start:Math.floor(Math.random() * N),
+    q:null, phase:'play', order:[], oi:0, played:ALL.map(() => null), left:0, over:false };
   newRound();
 }
 function draw(){
@@ -342,16 +341,16 @@ function makeQ(){
 }
 const isRight = (card, q) => card.g === q.g;
 function newRound(){
-  G.round++; G.q = makeQ(); G.phase = 'play'; G.played = [null, null, null, null];
-  G.order = [0, 1, 2, 3].map(k => (G.start + k) % 4); G.start = (G.start + 1) % 4; G.oi = 0;
+  G.round++; G.q = makeQ(); G.phase = 'play'; G.played = ALL.map(() => null);
+  G.order = ALL.map(k => (G.start + k) % N); G.start = (G.start + 1) % N; G.oi = 0;
   nextActor();
 }
 
 /* ================= 出牌：每人輪一次，出一張或 Pass ================= */
-const actor = () => G.phase === 'play' && G.oi < 4 ? G.order[G.oi] : -1;
+const actor = () => G.phase === 'play' && G.oi < N ? G.order[G.oi] : -1;
 function nextActor(){
   render();
-  if (G.oi >= 4){ later(startCheck, 500); return; }
+  if (G.oi >= N){ later(startCheck, 500); return; }
   const i = actor();
   if (i !== 0) later(() => aiPlay(i), 900 + Math.random() * 500);
 }
@@ -376,7 +375,7 @@ function startCheck(){
   // 電腦家：看到別人出錯牌，有機會去抓
   G.played.forEach((p, i) => {
     if (!p || !p.card || isRight(p.card, G.q)) return;
-    [1, 2, 3].filter(j => j !== i).forEach(j => { if (Math.random() < AI.catch) later(() => doCatch(j, i), 2000 + Math.random() * 6000); });
+    AIS.filter(j => j !== i).forEach(j => { if (Math.random() < AI.catch) later(() => doCatch(j, i), 2000 + Math.random() * 6000); });
   });
   tick();
 }
@@ -412,7 +411,7 @@ function reveal(){
   });
   const anyRight = G.played.some(p => p && p.ok);
   if (anyRight) SFX.ok(); else SFX.pass();
-  [0, 1, 2, 3].forEach(gainLoot);
+  ALL.forEach(gainLoot);
   render();
   const top = Math.max(...G.score);
   if (top >= WIN){ later(finish, 2200); return; }
@@ -433,7 +432,7 @@ function gainLoot(i){
 }
 function finish(){
   clearTimers(); G.over = true; G.phase = 'over';
-  const order = [0, 1, 2, 3].sort((a, b) => G.score[b] - G.score[a]), win = order[0];
+  const order = ALL.slice().sort((a, b) => G.score[b] - G.score[a]), win = order[0];
   if (win === 0) SFX.win(); else SFX.no();
   render();
   showOv(`<h2 style="font-size:30px">${win === 0 ? '🎉 你贏了！' : `${PLAYERS[win].av} ${PLAYERS[win].name}贏了`}</h2>
@@ -464,7 +463,7 @@ const lootHtml = i => `<div class="loot">${G.loot[i].map(x => `<span title="${x[
 function render(){
   if (!G) return;
   const now = actor();
-  [1, 2, 3].forEach(i => {
+  AIS.forEach(i => {
     const el = $('seat' + i);
     el.className = el.className.replace(/\bturn\b/g, '').trim() + (now === i ? ' turn' : '');
     el.innerHTML = `<span class="who"><span class="av">${PLAYERS[i].av}</span>${PLAYERS[i].name}<span class="pts">⭐${G.score[i]}</span></span>${lootHtml(i)}
@@ -476,7 +475,7 @@ function render(){
   $('qcard').innerHTML = head + (q.type === 'fill'
     ? `<div class="qtext">句子裡的空格可以填哪一個成語？</div><div class="qsent">${esc(q.p).replace('＿', '<span class="blank">？</span>')}</div>`
     : `<div class="qtext">找出和 <span class="key">「${esc(q.p)}」</span> 意思${q.type === 'syn' ? '相近' : '相反'}的成語</div>`)
-    + '<div class="qhint">答案不只一個，很多人都可以出牌！</div>';
+    + '<div class="qhint">答案不只一個，兩個人都可以出牌！</div>';
   // 中間的提示
   let ph = '';
   if (G.phase === 'play') ph = `<span class="msg">${now === 0 ? '輪到你了！' : now > 0 ? `${nm(now)}正在想…` : '大家都出完了，準備檢查…'}</span>`;
@@ -514,10 +513,10 @@ function explain(card, canPlay){
 }
 const RULES = `<h2 style="font-size:30px">玩法</h2>
   <ol class="rules">
-    <li>你和小美、阿哲、小安每人有 10 張成語牌。</li>
-    <li>中間出題目：找<b>意思相近</b>、<b>意思相反</b>的成語，或<b>填進句子</b>的成語。答案不只一個！</li>
-    <li>每一題大家輪流，每人可以出一張牌，也可以按「Pass」。點牌可以先看解釋。</li>
-    <li>大家都出完後是<b>檢查時間</b>：點別人的牌看解釋，發現出錯了就按「抓！」，抓到得 1 分（抓錯扣 1 分）。</li>
+    <li>你和小美兩個人，每人有 5 張成語牌。</li>
+    <li>中間出題目：找<b>意思相近</b>、<b>意思相反</b>的成語，或<b>填進句子</b>的成語。答案不只一個，兩個人可能都出得了牌！</li>
+    <li>每一題兩個人輪流，每人可以出一張牌，也可以按「Pass」。點牌可以先看解釋。</li>
+    <li>兩個人都出完後是<b>檢查時間</b>：點小美的牌看解釋，發現出錯了就按「抓！」，抓到得 1 分（抓錯扣 1 分）。小美也會抓你喔！</li>
     <li>每丟一張牌，就會馬上再補一張。公布答案時，出對的牌得 5 分；出錯的牌要收回去（手上會多一張）。</li>
     <li>每 10 分得到一個道具或寵物，誰先拿到 <b>50 分</b>誰就贏！</li>
   </ol>
